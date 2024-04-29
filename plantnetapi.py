@@ -13,7 +13,7 @@ def enregistrer_image(url, chemin_local):
         with open(chemin_local, 'wb') as fichier:
             fichier.write(reponse.content)
             
-        print("L'image a été enregistrée avec succès sous", chemin_local)
+        print("The image was successfully saved as", chemin_local)
     except Exception as e:
         print("Une erreur est survenue lors de l'enregistrement de l'image :", str(e))
 
@@ -31,24 +31,24 @@ def render_json_as_text(json_data):
         rendered_text += "  -\n"
         rendered_text += f"    score: {result['score']}\n"
         species = result.get("species", {})
-        rendered_text += f"    nom scientifique: {species.get('scientificNameWithoutAuthor')}\n"
-        rendered_text += f"    auteur: {species.get('scientificNameAuthorship')}\n"
+        rendered_text += f"    scientific name: {species.get('scientificNameWithoutAuthor')}\n"
+        rendered_text += f"    autor: {species.get('scientificNameAuthorship')}\n"
         genus = species.get("genus", {})
-        rendered_text += f"    genre: {genus.get('scientificNameWithoutAuthor')}\n"
+        rendered_text += f"    gender: {genus.get('scientificNameWithoutAuthor')}\n"
         family = species.get("family", {})
-        rendered_text += f"    famille: {family.get('scientificNameWithoutAuthor')}\n"
+        rendered_text += f"    family: {family.get('scientificNameWithoutAuthor')}\n"
         common_names = species.get("commonNames", [])
-        rendered_text += "    noms communs:\n"
+        rendered_text += "    commons names:\n"
         for name in common_names:
             rendered_text += f"      - {name}\n"
-        rendered_text += f"    nom scientifique complet: {species.get('scientificName')}\n"
+        rendered_text += f"    ^full scientific name: {species.get('scientificName')}\n"
         gbif = result.get("gbif", {})
         rendered_text += f"    ID GBIF: {gbif.get('id')}\n"
         powo = result.get("powo", {})
         rendered_text += f"    ID POWO: {powo.get('id')}\n"
 
     rendered_text += f"version: {data.get('version')}\n"
-    rendered_text += f"il reste: {data.get('remainingIdentificationRequests')} requetes\n"
+    rendered_text += f"he's staying: {data.get('remainingIdentificationRequests')} requestes\n"
 
     return rendered_text
 
@@ -73,13 +73,13 @@ except FileNotFoundError:
 
 
 while True:
-    api_key = input("Entrez votre clé d'API :")
-    url_image = input("Entrez l'URL de l'image (ou 'exit' pour quitter) : ")
+    api_key = input("Enter your API key:")
+    url_image = input("Enter the image URL (or 'exit' to leave):")
     if url_image.lower() == 'exit':
         break
     encoded_url = encode_url(url_image)
     
-    typedeplante = input("Entrez flower, leaf, fruit, bark ou auto : ")
+    typedeplante = input("Enter flower, leaf, fruit, bark ou auto : ")
 
     url = f'https://my-api.plantnet.org/v2/identify/all?images={encoded_url}&organs={typedeplante}&include-related-images=false&no-reject=false&lang=fr&type=kt&api-key={api_key}'
     print(encoded_url)
@@ -94,13 +94,13 @@ while True:
         text_output = render_json_as_text(json_data)
 
         print(text_output)
-        enregistrer = input("Voulez-vous enregistrer les résultats de la requête + L'image? (oui/non) : ")
-        if enregistrer.lower() == 'oui':
+        enregistrer = input("Do you want to save the query results + Image? (Yes No) :")
+        if enregistrer.lower() == 'yes':
             nom_fichier = f"recherche{compteur}.txt"
             with open(nom_fichier, "w") as fichier:
                 fichier.write(text_output)
 
-            print(f"Résultat enregistré dans '{nom_fichier}'")
+            print(f"Result saved in'{nom_fichier}'")
         
             # Enregistrer l'image à partir de l'URL saisie
             chemin_image = f'image{compteur}.jpg'
@@ -111,6 +111,6 @@ while True:
                 f.write(str(compteur))
 
         # Afficher le nombre de requêtes restantes
-        print(f"Il reste {json_data.get('remainingIdentificationRequests')} requêtes.")
+        print(f"He's staying{json_data.get('remainingIdentificationRequests')} requests.")
     else:
-        print("La requête a échoué avec le code d'état :", response.status_code)
+        print("The request failed with status code:", response.status_code)
